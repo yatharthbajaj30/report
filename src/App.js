@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
 
+import './App.css';
+import Data from './components/Data';
+import EmployeeLogin from './components/Login';
+import NavBar from "./components/NavBar";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 function App() {
+  const [user, setUser] = useState({
+    isAuthenticated: false,
+    role: "", // 'admin' or 'user'
+  });
+
+  const handleLogin = (role) => {
+    setUser({
+      isAuthenticated: true,
+      role: role,
+    });
+  };
+
+  const handleLogout = () => {
+    setUser({
+      isAuthenticated: false,
+      role: "",
+    });
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {user.isAuthenticated && <NavBar role={user.role} onLogout={handleLogout} />}
+      
+        <Routes>
+        <Route
+            path="/"
+            element={<EmployeeLogin onLogin={handleLogin} />}
+          />
+        
+            {!user.isAuthenticated ? (
+            // Use the 'element' prop to render the desired component
+            <Route
+              path="*"
+              element={<Navigate to="/" />}
+            />
+          ) : (<><Route path='/Data' element={<Data/>}></Route></>)}
+        </Routes>
+      
+     
     </div>
   );
 }
